@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: http-server-app
+
+spec:
+    replicas: 4
+    #ricordo che template non fa altro che definire la risorsa pod
+    selector:
+        matchLabels:
+            app:    http-server
+    template:
+        metadata:
+            name:   http-server
+            labels:
+                app:    http-server
+                
+        spec:
+            containers:
+                #rispetto alla versione che c'era prima (v3), ora gli diamo il
+                #tag latest
+            -   image: ab980020/test-k8s:latest
+            #specifico cosa fare se container non presente
+                imagePullPolicy: IfNotPresent        
+                name: test-k8s
+                ports:
+                -   containerPort: 8080
+                    protocol: TCP
+    strategy:
+    #come effettuare gli aggiornamenti
+        type: RollingUpdate
+        #termino i vecchi e creo i nuovi pod in modo graduale
+
+        #altrimenti c'era il tipo "Recreate" che eliminava tutti assieme
+        #i vecchi pod, e dualmente creava tutti assieme i nuovi pod
+
+        #posso definire anche delle opzioni per il rolling 
+        #ovvero, quanti pod vecchi posso eliminare(indico quanti ne
+        #rimangono) e quanti nuovi pod creo assieme(macSurge)
+        rollingUpdate: 
+            maxUnavailable: 1
+            maxSurge: 2
+    
+    minReadySeconds: 5
+    
+    #dopo quanto tempo dai nuovi pod il servizio torna disponibiles
+    #minReadySeconds: 10

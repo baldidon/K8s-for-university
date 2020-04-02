@@ -1,0 +1,31 @@
+#file configurazione per eseguire http-server.py in k8s
+#apiVersion dipende da che tipo di risorsa devo andare a definire!
+#pod sta nella prima versione di apiversion
+
+#all'inizio del file deve esserci sempre
+apiVersion: v1
+
+#dichiaro tipo di risorsa
+kind: Pod
+
+#metadata
+metadata: 
+    name: http-server
+    labels:
+        app: http-server
+        #l'etichetta sottostante è un esempio
+        type: python
+
+#specifiche del pod
+spec:
+    #nodeSelector:
+        #disktype: ssd
+    containers:
+    -   image: ab980020/test-k8s:v3
+        #specifico cosa fare se container non presente
+        imagePullPolicy: IfNotPresent
+        
+        name: test-k8s
+        ports:
+        -   containerPort: 8080
+            protocol: TCP

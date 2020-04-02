@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind:   ReplicaSet
+metadata:
+    name:   http-server-app
+#definisco le specifiche del replicaSet: il container, il numero di repliche
+#solo che il "pod" va sotto il nome di template, come se fosse l'indicazione per creare
+#n pod, se n è il numero prestabilito 
+spec:
+    replicas:   3
+    selector:
+        matchLabels:
+            app:    http-server
+    #il vecchio pod
+    template:
+        metadata:
+            name:   http-server
+            #deve combaciare con l'etichetta del selector
+            labels: 
+                app:    http-server
+        spec:    
+            containers:
+            -   image: ab980020/test-k8s:v3
+                #specifico cosa fare se container non presente
+                imagePullPolicy: IfNotPresent                
+                name: test-k8s
+                ports:
+                -   containerPort: 8080  
+                    protocol: TCP
+                

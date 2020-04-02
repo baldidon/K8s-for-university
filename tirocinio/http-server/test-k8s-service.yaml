@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: http-server
+spec:
+    #LE SPECIFICHE DEL SERVIZIO
+
+    #se non dichiaro type, è di default CLUSTER-IP, ovvero espongo il
+    #servizio verso gli altri pod del cluster e non verso l'esterno
+    #del cluster
+    type: NodePort
+    ports:
+      - nodePort: 30000 
+        port: 8080
+        targetPort: 8080
+    
+    selector:
+      app: http-server
+    
