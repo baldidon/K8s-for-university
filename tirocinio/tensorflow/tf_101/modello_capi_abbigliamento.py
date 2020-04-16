@@ -6,8 +6,9 @@
 
 #librerie d'appoggio
 import matplotlib as mpl
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import numpy as np
+import random as rand
 
 #tensorflow libraries
 import tensorflow as tf
@@ -38,7 +39,7 @@ print(f"caratteristiche del dato train images: {train_images.shape}")
 print(len(train_labels))
 
 #verifichiamo forma di test_images
-print(f"caratteristiche dell'oggetto test_images: {test_images.shape}")
+print(f"caratteristiche dell'oggetto test_images: {test_images[0].shape}")
 
 
 #==================================================================
@@ -59,6 +60,7 @@ test_images = test_images / 255.0
 #Per verificare che i dati siano nella forma corretta e che tutto sia pronto per costruire e allenare la rete,
 #visualizziamo le prime 25 immagini del insieme di addestramento e visualizziamo il nome della classe sotto a ciascuna immagine.
 
+"""
 plt.figure(figsize=(10,10))
 for i in range(25):
     plt.subplot(5,5,i+1)
@@ -68,6 +70,7 @@ for i in range(25):
     plt.imshow(train_images[i], cmap=plt.cm.binary)
     plt.xlabel(class_names[train_labels[i]])
 plt.show()
+"""
 
 #==============================================================================================================
 
@@ -137,9 +140,10 @@ else:
 #ci sono alcuni casi che il modello è un po' più indeciso. In questo caso ci ha restituito una probabilità del 98 percento che fosse uno stivaletto(e quello era!!!)
 
 
+
 #==================================================================
 #per visualizzare le previsioni fatte
-
+'''
 def plot_image(i, predictions_array, true_label, img):
   predictions_array, true_label, img = predictions_array, true_label[i], img[i]
   plt.grid(False)
@@ -186,3 +190,4 @@ for i in range(num_images):
   plot_value_array(i, predictions[i], test_labels)
 plt.tight_layout()
 plt.show()
+'''

@@ -1,6 +1,6 @@
 FROM alpine:3.7
 COPY . /app/
 #
-RUN apk update && apk add bash
+RUN apk update && apk add bash && apk add python3
 ENTRYPOINT ["bash"]
 

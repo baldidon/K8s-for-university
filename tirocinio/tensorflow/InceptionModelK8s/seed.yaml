@@ -1,0 +1,45 @@
+#PERCHÈ STIAMO CREANDO QUESTO STORAGE PERSISTENTE? per inserirci l'inceptionModel (Necessario per identificare immagini)
+#il job infatti mi serve "semplicemente" a scaricare(nb che il comando curl scarica da tf proprio il modello Inception) 
+
+
+apiVersion: v1
+#risorsa per richiedere(claim) spazio. La richiesta è di un volume di spazio (Persistent volumes)
+kind: PersistentVolumeClaim
+metadata:
+  name: seed
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+---
+#la risorsa job fa questo: crea i pod (definiti nel template) e garantisce che le azioni definite(sul container) vengano eseguite
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seed-inception
+spec:
+  template:
+    metadata:
+      name: seed-inception
+    spec:
+      containers:
+      - name: seed
+        image: bitnami/minideb-extras:jessie
+        command: ["/bin/sh"]
+        #azioni da eseguire sul container
+        args: ["-c", "curl -o /seed/inception-v3-2016-03-01.tar.gz http://download.tensorflow.org/models/image/imagenet/inception-v3-2016-03-01.tar.gz && cd /seed/ && tar -xzf inception-v3-2016-03-01.tar.gz && rm inception-v3-2016-03-01.tar.gz"]
+        #il volume deve coincidere con quello creato in precedenza(?)
+        volumeMounts:
+        - name: seed
+          mountPath: /seed
+      restartPolicy: Never
+      #la restart policy serve per indicare che accade se il pod crasha
+      volumes:
+      - name: seed
+        persistentVolumeClaim:
+          claimName: seed
+#NOTA BENE
+#tra le spec del job posso mettere cose come: ttlSecondAfterFinished (indicare dopo quanti secondi terminare la risorsa Job)
+

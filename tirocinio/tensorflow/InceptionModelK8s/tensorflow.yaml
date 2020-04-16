@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tensorflow-serving
+spec:
+  replicas: 1 #un solo pod verrà creato
+  #selector, ovvero le caratteristiche che devono avere i pod da gestire con la risorsa deployment
+  selector:
+    matchLabels:
+        app: tf 
+  #caratteristiche del pod da creare
+  template:
+    metadata:
+      labels:
+        app: tf
+    spec:
+        #initContainers serve per preparare il pod con utilities non presenti nel vero container che girerà nel Pod
+      initContainers:
+      - name: load-model
+        image: skippbox/tensorflow:0.0.1
+        imagePullPolicy: IfNotPresent  
+        command: ['/serving/bazel-bin/tensorflow_serving/example/inception_saved_model', '--checkpoint_dir=/seed/inception-v3', '--output_dir=/serving/inception-export']
+        volumeMounts:
+        - name: model
+          mountPath: "/serving/inception-export"
+        - name: seed
+          mountPath: "/seed"
+      containers:
+      - name: serving
+        image: skippbox/tensorflow:0.0.1
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: model
+          mountPath: "/serving/inception-export"
+      volumes:
+      - name: seed
+        persistentVolumeClaim:
+          claimName: seed
+      - name: model
+        emptyDir: {}
